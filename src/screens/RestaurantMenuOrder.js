@@ -14,7 +14,9 @@ import {
 } from "react-native";
 
 import { AntDesign, Ionicons, Octicons, FontAwesome } from "@expo/vector-icons";
+// import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import { globalStyles } from "../components/GlobalStyles";
 import NavBar from "../components/NavBar";
 import AuthContext from "../components/AuthContext";
 
@@ -36,11 +38,11 @@ const Product = ({ product, onQuantityChange }) => {
         style={styles.image}
       />
       <View style={{ flex: 1 }}>
-        <Text style={styles.productNameText}>{product.name}</Text>
-        <Text style={styles.productPriceText}>
+        <Text style={[styles.productNameText, globalStyles.arialBold]}>{product.name}</Text>
+        <Text style={[styles.productPriceText, globalStyles.arialBold]}>
           ${Number(product.cost / 100).toFixed(2)}
         </Text>
-        <Text style={styles.text}>Lorem ipsum dolor sit amet.</Text>
+        <Text style={[styles.text, globalStyles.arialNormal]}>Lorem ipsum dolor sit amet.</Text>
       </View>
       <AntDesign
         name="minuscircle"
@@ -48,7 +50,7 @@ const Product = ({ product, onQuantityChange }) => {
         color="black"
         onPress={() => handleQuantityChange(Math.max(0, quantity - 1))}
       />
-      <TextInput value={String(quantity)} style={styles.input} />
+      <TextInput value={String(quantity)} style={[styles.input, globalStyles.arialNormal]} />
       <AntDesign
         name="pluscircle"
         size={24}
@@ -138,13 +140,13 @@ const RestaurantMenuOrder = ({ route }) => {
       />
       <NavBar navigation={navigation} />
       <View style={styles.containerMain}>
-        <Text style={styles.headingText}>Restaurant Menu</Text>
+        <Text style={[styles.headingText, globalStyles.arialBold]}>Restaurant Menu</Text>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View>
-            <Text style={styles.restaurantNameText}>{restaurantName}</Text>
-            <Text style={styles.text}>Price: {priceRange}</Text>
+            <Text style={[styles.restaurantNameText, globalStyles.arialBold]}>{restaurantName}</Text>
+            <Text style={[styles.text, globalStyles.arialNormal]}>Price: {priceRange}</Text>
             <View style={{ flexDirection: "row" }}>
-              <Text style={styles.text}>Rating: </Text>
+              <Text style={[styles.text, globalStyles.arialNormal]}>Rating: </Text>
               <Text style={styles.starText}>{rating}</Text>
             </View>
           </View>
@@ -155,7 +157,7 @@ const RestaurantMenuOrder = ({ route }) => {
             onPress={handleCreateOrderPress}
             disabled={isOrderButtonDisabled}
           >
-            <Text style={styles.buttonText}>Create Order</Text>
+            <Text style={[styles.buttonText, globalStyles.arialBold]}>Create Order</Text>
           </TouchableOpacity>
           <Modal
             visible={isModalVisible}
@@ -165,13 +167,13 @@ const RestaurantMenuOrder = ({ route }) => {
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>Order Confirmation</Text>
+                  <Text style={[styles.modalTitle, globalStyles.arialBold]}>Order Confirmation</Text>
                   <TouchableOpacity onPress={() => setModalVisible(false)}>
-                    <Text style={styles.modalCloseButton}>X</Text>
+                    <Text style={[styles.modalCloseButton, globalStyles.arialBold]}>X</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.modalBody}>
-                  <Text style={styles.modalHeadingText}>Order Summary</Text>
+                  <Text style={[styles.modalHeadingText, globalStyles.arialBold]}>Order Summary</Text>
                   {Object.entries(quantities)
                     .filter(([productId, quantity]) => quantity > 0)
                     .map(([productId, quantity]) => {
@@ -181,20 +183,20 @@ const RestaurantMenuOrder = ({ route }) => {
                       const total = product.cost * quantity;
                       return (
                         <View key={productId} style={styles.orderItem}>
-                          <Text style={styles.orderItemText}>{product.name}</Text>
+                          <Text style={[styles.orderItemText, globalStyles.arialNormal]}>{product.name}</Text>
                           <Text
-                            style={[styles.orderItemText, styles.quantityText]}
+                            style={[styles.orderItemText, styles.quantityText, globalStyles.arialNormal]}
                           >
                             x{quantity}
                           </Text>
-                          <Text style={styles.priceText}>
+                          <Text style={[styles.priceText, globalStyles.arialNormal]}>
                             ${Number(total / 100).toFixed(2)}
                           </Text>
                         </View>
                       );
                     })}
                   <View style={styles.line} />
-                  <Text style={styles.orderTotalText}>
+                  <Text style={[styles.orderTotalText, globalStyles.arialBold]}>
                     TOTAL: $
                     {Number(
                       Object.entries(quantities).reduce(
@@ -216,9 +218,9 @@ const RestaurantMenuOrder = ({ route }) => {
                     onPress={handleConfirmOrderPress}
                   >
                     {orderStatus === "processing" ? (
-                      <Text style={styles.modalButtonText}>PROCESSING ORDER...</Text>
+                      <Text style={[styles.modalButtonText, globalStyles.arialBold]}>PROCESSING ORDER...</Text>
                     ) : (
-                      <Text style={styles.modalButtonText}>CONFIRM ORDER</Text>
+                        <Text style={[styles.modalButtonText, globalStyles.arialBold]}>CONFIRM ORDER</Text>
                     )}
                   </TouchableOpacity>
                 )}
@@ -229,8 +231,8 @@ const RestaurantMenuOrder = ({ route }) => {
                       size={35}
                       color="green"
                     />
-                    <Text style={styles.messageText}>Thank you!</Text>
-                    <Text style={styles.messageText}>
+                    <Text style={[styles.messageText, globalStyles.arialNormal]}>Thank you!</Text>
+                    <Text style={[styles.messageText, globalStyles.arialNormal]}>
                       Your order has been received.
                     </Text>
                   </View>
@@ -239,10 +241,10 @@ const RestaurantMenuOrder = ({ route }) => {
                   <View>
                     <View style={styles.failureMessage}>
                       <Octicons name="x-circle-fill" size={35} color="red" />
-                      <Text style={styles.messageText}>
+                      <Text style={[styles.messageText, globalStyles.arialNormal]}>
                         Your order was not processed successfully.
                       </Text>
-                      <Text style={styles.messageText}>Please try again.</Text>
+                      <Text style={[styles.messageText, globalStyles.arialNormal]}>Please try again.</Text>
                     </View>
                   </View>
                 )}
@@ -275,13 +277,13 @@ const styles = StyleSheet.create({
   },
   headingText: {
     fontSize: 18,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "left",
     marginVertical: 20,
   },
   restaurantNameText: {
     fontSize: 12,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "left",
   },
   text: {
@@ -312,7 +314,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   image: {
     width: 60,
@@ -330,11 +332,11 @@ const styles = StyleSheet.create({
   },
   productNameText: {
     fontSize: 14,
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   productPriceText: {
     fontSize: 14,
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   input: {
     width: 50,
@@ -358,7 +360,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   modalHeader: {
     flexDirection: "row",
@@ -383,7 +385,7 @@ const styles = StyleSheet.create({
   },
   modalHeadingText: {
     fontSize: 18,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "left",
     marginTop: 10,
     marginHorizontal: 20,
@@ -406,7 +408,7 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
+    // fontWeight: "bold",
   },
   orderItem: {
     flexDirection: "row",
@@ -427,7 +429,7 @@ const styles = StyleSheet.create({
   },
   orderTotalText: {
     fontSize: 18,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "right",
     width: "100%",
     marginTop: 5,

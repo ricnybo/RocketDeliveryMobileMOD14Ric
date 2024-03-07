@@ -5,6 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 import AuthContext from "../components/AuthContext";
 import { useContext } from "react";
 
+import { globalStyles } from "../components/GlobalStyles";
+
 const NavBar = () => {
   const navigation = useNavigation();
   const { handleLogout } = useContext(AuthContext);
@@ -23,7 +25,7 @@ const NavBar = () => {
         resizeMode="contain"
       />
       <TouchableOpacity style={button} onPress={onLogout}>
-        <Text style={buttonText}>LOG OUT</Text>
+        <Text style={[buttonText, globalStyles.arialBold]}>LOG OUT</Text>
       </TouchableOpacity>
     </View>
   );
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 15,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     color: "#FFF",
     textAlign: "center",
   },

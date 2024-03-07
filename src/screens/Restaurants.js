@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
+import { globalStyles } from "../components/GlobalStyles";
 import NavBar from "../components/NavBar";
 import RestaurantCard from "../components/RestaurantCard";
 
@@ -142,12 +143,12 @@ const Restaurants = ({ navigation }) => {
       />
       <NavBar navigation={navigation} />
       <ScrollView style={subContainer}>
-        <Text style={headingText}>NEARBY RESTAURANTS</Text>
+        <Text style={[headingText, globalStyles.arialBold]}>NEARBY RESTAURANTS</Text>
         <View style={buttonContainer}>
           <View style={buttonPair}>
-            <Text style={label}>Rating</Text>
+            <Text style={[label, globalStyles.arialBold]}>Rating</Text>
             <TouchableOpacity style={button} onPress={handleOpenRatingModal}>
-              <Text style={buttonText}>
+              <Text style={[buttonText, globalStyles.arialBold]}>
                 {Array.isArray(ratingLabel)
                   ? ratingLabel.map((star, i) =>
                       React.cloneElement(star, { color: "white", key: i })
@@ -173,7 +174,7 @@ const Restaurants = ({ navigation }) => {
                           handleSelectRating(item.value, item.label, "#000")
                         }
                       >
-                        <Text style={styles.modalText}>{item.label}</Text>
+                        <Text style={[styles.modalText, globalStyles.arialNormal]}>{item.label}</Text>
                       </TouchableOpacity>
                     )}
                   />
@@ -182,12 +183,12 @@ const Restaurants = ({ navigation }) => {
             </Modal>
           </View>
           <View style={buttonPair}>
-            <Text style={label}>Price</Text>
+            <Text style={[label, globalStyles.arialBold]}>Price</Text>
             <TouchableOpacity
               style={button}
               onPress={handleOpenPriceRangeModal}
             >
-              <Text style={buttonText}>
+              <Text style={[buttonText, globalStyles.arialBold]}>
                 {priceRangeLabel}{" "}
                 <AntDesign name="caretdown" size={15} color="white" />
               </Text>
@@ -209,7 +210,7 @@ const Restaurants = ({ navigation }) => {
                           handleSelectPriceRange(item.value, item.label)
                         }
                       >
-                        <Text style={styles.modalText}>{item.label}</Text>
+                        <Text style={[styles.modalText, globalStyles.arialNormal]}>{item.label}</Text>
                       </TouchableOpacity>
                     )}
                   />
@@ -218,7 +219,7 @@ const Restaurants = ({ navigation }) => {
             </Modal>
           </View>
         </View>
-        <Text style={headingText}>RESTAURANTS</Text>
+        <Text style={[headingText, globalStyles.arialBold]}>RESTAURANTS</Text>
         <View style={restaurantContainer}>
           {list.map((restaurant, index) => (
             <RestaurantCard key={index} restaurant={restaurant} />
@@ -245,7 +246,7 @@ const styles = StyleSheet.create({
   },
   headingText: {
     fontSize: 18,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "left",
     marginVertical: 20,
   },
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 20,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     color: "#FFF",
     textAlign: "center",
   },
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 20,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     marginTop: 20,
     marginHorizontal: 5,
   },

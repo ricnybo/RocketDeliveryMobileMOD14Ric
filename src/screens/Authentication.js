@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import AuthContext from "../components/AuthContext";
+import { globalStyles } from "../components/GlobalStyles";
 
 const screenWidth = Dimensions.get("window").width;
 const imageSize = screenWidth - 100; // 100 is the padding
@@ -53,6 +54,12 @@ const Authentication = () => {
     }
   };
 
+  // ! For testing purposes only - remove before production
+  useEffect(() => {
+    setEmail("erica.ger@gmail.com");
+    setPassword("password");
+  }, []);
+
   useEffect(() => {
     if (isLoggedIn) {
       navigation.navigate("Tabs");
@@ -75,19 +82,19 @@ const Authentication = () => {
           resizeMode="contain"
         />
         <View style={box}>
-          <Text style={text}>Welcome Back</Text>
-          <Text style={text2}>Login to begin</Text>
-          <Text style={label}>Email</Text>
+          <Text style={[text, globalStyles.arialBold]}>Welcome Back</Text>
+          <Text style={[text2, globalStyles.arialBold]}>Login to begin</Text>
+          <Text style={[label, globalStyles.arialBold]}>Email</Text>
           <TextInput
-            style={input}
+            style={[input, globalStyles.arialNormal]}
             onChangeText={setEmail}
             value={email}
             placeholder="Enter your primary email here"
             keyboardType="email-address"
           />
-          <Text style={label}>Password</Text>
+          <Text style={[label, globalStyles.arialBold]}>Password</Text>
           <TextInput
-            style={input}
+            style={[input, globalStyles.arialNormal]}
             onChangeText={setPassword}
             value={password}
             placeholder="************"
@@ -99,7 +106,7 @@ const Authentication = () => {
           ) : null}
           <View>
             <TouchableOpacity style={button} onPress={handleLogin}>
-              <Text style={buttonText}>LOG IN</Text>
+              <Text style={[buttonText, globalStyles.arialBold]}>LOG IN</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -121,12 +128,12 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "left",
   },
   text2: {
     fontSize: 15,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "left",
     paddingBottom: 10,
   },
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     color: "#FFF",
-    fontWeight: "bold",
+    // fontWeight: "bold",
     textAlign: "center",
   },
   input: {
@@ -169,7 +176,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    fontWeight: "bold",
+    // fontWeight: "bold",
     marginTop: 20,
   },
 });

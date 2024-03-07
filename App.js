@@ -7,11 +7,15 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Tabs from "./src/components/Tabs";
 import * as Location from "expo-location";
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 import Authentication from "./src/screens/Authentication";
 import Restaurants from "./src/screens/Restaurants";
 import AuthContext from "./src/components/AuthContext";
 import RestaurantMenuOrder from "./src/screens/RestaurantMenuOrder";
+
+SplashScreen.preventAutoHideAsync();
 
 const App = () => {
   const { container } = styles;
@@ -20,6 +24,19 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const Stack = createStackNavigator();
+
+  const [fontsLoaded, fontError] = useFonts({
+    'Oswald': require('./assets/fonts/Oswald-Regular.ttf'),
+    'Oswald-Bold': require('./assets/fonts/Oswald-Bold.ttf'),
+    'Oswald-Light': require('./assets/fonts/Oswald-Light.ttf'),
+    'Oswald-ExtraLight': require('./assets/fonts/Oswald-ExtraLight.ttf'),
+    'Oswald-Medium': require('./assets/fonts/Oswald-Medium.ttf'),
+    'Oswald-SemiBold': require('./assets/fonts/Oswald-SemiBold.ttf'),
+    'Arial': require('./assets/fonts/arial.ttf'),
+    "Arial-Bold": require('./assets/fonts/arialbd.ttf'),
+    "Arial-Italic": require('./assets/fonts/ariali.ttf'),
+    "Arial-Bold-Italic": require('./assets/fonts/arialbi.ttf'),
+  });
 
   useEffect(() => {
     (async () => {
@@ -32,6 +49,18 @@ const App = () => {
       setLocation(location);
     })();
   }, []);
+
+  if (!fontsLoaded) {
+    if (fontError) {
+      console.error(fontError);
+    }
+    return null;
+  }
+
+  if (fontsLoaded) {
+    SplashScreen.hideAsync();
+  }
+
 
   if (location) {
     console.log(location);
