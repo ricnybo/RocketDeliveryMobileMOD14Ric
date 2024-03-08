@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AuthContext from "../components/AuthContext";
 import { globalStyles } from "../components/GlobalStyles";
@@ -23,11 +24,22 @@ const URI = process.env.EXPO_PUBLIC_NGROK_URL;
 
 const Authentication = () => {
   const navigation = useNavigation();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const { user, setUser, isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const { container, image, text, text2, input, box, label, button, buttonText } = styles;
+  const { user, setUser, isLoggedIn, setIsLoggedIn, userMode, setUserMode, hasBothRoles, setHasBothRoles } =
+    useContext(AuthContext);
+  const {
+    container,
+    image,
+    text,
+    text2,
+    input,
+    box,
+    label,
+    button,
+    buttonText,
+  } = styles;
 
   const handleLogin = async () => {
     const response = await fetch(`${URI}/api/login`, {
@@ -44,15 +56,78 @@ const Authentication = () => {
     const data = await response.json();
 
     if (data.success) {
-      setUser(data);
+      await AsyncStorage.setItem(
+        "user",
+        JSON.stringify({
+          user_id: data.user_id,
+          customer_id: data.customer_id,
+          courier_id: data.courier_id,
+        })
+      );
+      setUser({
+        user_id: data.user_id,
+        customer_id: data.customer_id,
+        courier_id: data.courier_id,
+      });
       setIsLoggedIn(true);
       setEmail(""); // Reset email
       setPassword(""); // Reset password
-      navigation.navigate("Tabs");
+      if (data.customer_id && data.courier_id) {
+        setUserMode("both");
+        setHasBothRoles(true);
+      } else if (data.customer_id) {
+        setUserMode("customer");
+        setHasBothRoles(false);
+      } else if (data.courier_id) {
+        setUserMode("courier");
+        setHasBothRoles(false);
+      } else {
+        setUserMode("unauthorized");
+        setHasBothRoles(false);
+      }
+      // navigation.navigate("Tabs");
+      // navigation.navigate("AccountSelection");
     } else {
       setErrorMessage("Invalid email or password");
     }
   };
+
+  useEffect(() => {
+    const bootstrapAsync = async () => {
+      let userData;
+
+      try {
+        userData = await AsyncStorage.getItem("user");
+      } catch (e) {
+        // Restoring token failed
+      }
+
+      if (userData) {
+        setUser(JSON.parse(userData));
+        setIsLoggedIn(true);
+      }
+    };
+
+    bootstrapAsync();
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      if (userMode === "both") {
+        console.log('(Authentication) userMode both: ', userMode);
+        navigation.navigate("AccountSelection");
+      } else if (userMode === "customer") {
+        console.log('(Authentication) userMode customer: ', userMode);
+        navigation.navigate("Restaurants");
+      } else if (userMode === "courier") {
+        console.log('(Authentication) userMode courier: ', userMode);
+        navigation.navigate("CourierDeliveries");
+      } else {
+        console.log('(Authentication) userMode unauthorized: ', userMode);
+        navigation.navigate("Unauthorized");
+      }
+    }
+  }, [isLoggedIn, userMode, navigation]);
 
   // ! For testing purposes only - remove before production
   useEffect(() => {
@@ -60,11 +135,16 @@ const Authentication = () => {
     setPassword("password");
   }, []);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigation.navigate("Tabs");
-    }
-  }, [isLoggedIn, navigation]);
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     navigation.navigate("Tabs");
+  //   }
+  // }, [isLoggedIn, navigation]);
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     navigation.navigate("AccountSelection");
+  //   }
+  // }, [isLoggedIn, navigation]);
 
   return (
     <KeyboardAwareScrollView
@@ -102,7 +182,9 @@ const Authentication = () => {
           />
           <Text></Text>
           {errorMessage ? (
-            <Text style={{ color: "#DA583B", marginBottom: 5 }}>{errorMessage}</Text>
+            <Text style={{ color: "#DA583B", marginBottom: 5 }}>
+              {errorMessage}
+            </Text>
           ) : null}
           <View>
             <TouchableOpacity style={button} onPress={handleLogin}>

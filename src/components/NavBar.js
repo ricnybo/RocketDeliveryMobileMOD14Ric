@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AuthContext from "../components/AuthContext";
 import { useContext } from "react";
@@ -9,10 +10,10 @@ import { globalStyles } from "../components/GlobalStyles";
 
 const NavBar = () => {
   const navigation = useNavigation();
-  const { handleLogout } = useContext(AuthContext);
+  const { handleLogout, setUser, setIsLoggedIn } = useContext(AuthContext);
   const { container, image, button, buttonText } = styles;
 
-  const onLogout = () => {
+  const onLogout = async () => {
     handleLogout();
     navigation.navigate("Authentication");
   };

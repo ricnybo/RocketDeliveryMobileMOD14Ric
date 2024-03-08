@@ -11,10 +11,11 @@ import {
   FlatList,
 } from "react-native";
 import fetch from "node-fetch";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
+import AuthContext from "../components/AuthContext";
 import { globalStyles } from "../components/GlobalStyles";
 import NavBar from "../components/NavBar";
 import RestaurantCard from "../components/RestaurantCard";
@@ -42,6 +43,8 @@ const Restaurants = ({ navigation }) => {
   const [priceRangeLabel, setPriceRangeLabel] = useState("-- Select --");
   const [isRatingModalVisible, setRatingModalVisible] = useState(false);
   const [isPriceRangeModalVisible, setPriceRangeModalVisible] = useState(false);
+  const { user, setUser, isLoggedIn, setIsLoggedIn, userMode, setUserMode, hasBothRoles, setHasBothRoles } =
+    useContext(AuthContext);
 
   const ratings = [
     { label: "-- Select --", value: "-- Select --" },
@@ -95,6 +98,14 @@ const Restaurants = ({ navigation }) => {
     fetchList();
   }, [rating, priceRange]);
 
+  useEffect(() => {
+    if (userMode === "courier") {
+      navigation.navigate("CourierDeliveries");
+    } else if (userMode !== "customer") {
+      navigation.navigate("Authentication");
+    }
+  }, [userMode, navigation]);
+
   const handleSelectRating = (rating, label) => {
     if (rating === "-- Select --") {
       setRating(rating);
@@ -143,7 +154,9 @@ const Restaurants = ({ navigation }) => {
       />
       <NavBar navigation={navigation} />
       <ScrollView style={subContainer}>
-        <Text style={[headingText, globalStyles.arialBold]}>NEARBY RESTAURANTS</Text>
+        <Text style={[headingText, globalStyles.arialBold]}>
+          NEARBY RESTAURANTS
+        </Text>
         <View style={buttonContainer}>
           <View style={buttonPair}>
             <Text style={[label, globalStyles.arialBold]}>Rating</Text>
@@ -174,7 +187,11 @@ const Restaurants = ({ navigation }) => {
                           handleSelectRating(item.value, item.label, "#000")
                         }
                       >
-                        <Text style={[styles.modalText, globalStyles.arialNormal]}>{item.label}</Text>
+                        <Text
+                          style={[styles.modalText, globalStyles.arialNormal]}
+                        >
+                          {item.label}
+                        </Text>
                       </TouchableOpacity>
                     )}
                   />
@@ -210,7 +227,11 @@ const Restaurants = ({ navigation }) => {
                           handleSelectPriceRange(item.value, item.label)
                         }
                       >
-                        <Text style={[styles.modalText, globalStyles.arialNormal]}>{item.label}</Text>
+                        <Text
+                          style={[styles.modalText, globalStyles.arialNormal]}
+                        >
+                          {item.label}
+                        </Text>
                       </TouchableOpacity>
                     )}
                   />

@@ -2,11 +2,12 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome6 } from "@expo/vector-icons";
 
 import Restaurants from "../screens/Restaurants";
 import OrderHistory from "../screens/OrderHistory";
 import RestaurantMenuOrder from "../screens/RestaurantMenuOrder";
+import CustomerAccount from "../screens/CustomerAccount";
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator();
@@ -79,6 +80,17 @@ const Tabs = () => {
           ),
         }}
       />
+      <Tab.Screen
+        name={"Account"}
+        component={CustomerAccount}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View style={focused ? styles.activeIcon : styles.icon}>
+              <FontAwesome6 name="user-large" size={13} color='black' />
+            </View>
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -91,7 +103,7 @@ const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: "lightgrey",
     borderRadius: 15,
-    paddingHorizontal: 20,
+    paddingHorizontal: 9,
   },
 });
 

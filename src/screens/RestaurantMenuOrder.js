@@ -73,7 +73,7 @@ const RestaurantMenuOrder = ({ route }) => {
   const { restaurantPriceRange } = route.params;
   const priceRange = "$".repeat(restaurantPriceRange);
   const rating = [...Array(restaurantRating)].map((_, i) => <FontAwesome key={i} name="star" size={14} color="black" />);
-  const { user, isLoggedIn } = useContext(AuthContext);
+  const { user, isLoggedIn, userMode } = useContext(AuthContext);
   const customerId = user.customer_id;
 
   useEffect(() => {
@@ -84,6 +84,14 @@ const RestaurantMenuOrder = ({ route }) => {
         .catch((error) => console.error(error));
     }
   }, [restaurantId, user]);
+
+  useEffect(() => {
+    if (userMode === "courier") {
+      navigation.navigate("CourierDeliveries");
+    } else if (userMode !== "customer") {
+      navigation.navigate("Authentication");
+    }
+  }, [userMode, navigation]);
 
   const handleQuantityChange = (productId, quantity) => {
     setQuantities((prevQuantities) => ({
