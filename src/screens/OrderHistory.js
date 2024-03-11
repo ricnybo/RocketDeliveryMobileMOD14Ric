@@ -264,16 +264,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 5,
     marginHorizontal: 20,
+    // backgroundColor: "green",
   },
   orderItemText: {
+    fontFamily: globalStyles.arialNormal.fontFamily,
     fontSize: 14,
     color: "black",
     flex: 1,
   },
   quantityText: {
-    flex: 0.5,
+    wifth: 25,
+    flex: 0.25,
   },
   priceText: {
+    width: 70,
+    textAlign: "right",
     alignSelf: "flex-end",
   },
   totalContainer: {

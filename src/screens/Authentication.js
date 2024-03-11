@@ -112,6 +112,8 @@ const Authentication = () => {
   }, []);
 
   useEffect(() => {
+    console.log('(Authentication) Use State Value log:');
+    console.log('(Authentication) isLoggedIn:', isLoggedIn);
     if (isLoggedIn) {
       if (userMode === "both") {
         console.log('(Authentication) userMode both: ', userMode);
@@ -121,13 +123,14 @@ const Authentication = () => {
         navigation.navigate("Restaurants");
       } else if (userMode === "courier") {
         console.log('(Authentication) userMode courier: ', userMode);
-        navigation.navigate("CourierDeliveries");
+        navigation.navigate("TabsCourier");
       } else {
         console.log('(Authentication) userMode unauthorized: ', userMode);
         navigation.navigate("Unauthorized");
       }
+      console.log('(Authentication) hasBothRoles after login:', hasBothRoles);
     }
-  }, [isLoggedIn, userMode, navigation]);
+  }, [isLoggedIn, userMode, navigation, userMode, hasBothRoles]);
 
   // ! For testing purposes only - remove before production
   useEffect(() => {

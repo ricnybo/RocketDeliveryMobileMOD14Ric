@@ -154,14 +154,14 @@ const Restaurants = ({ navigation }) => {
       />
       <NavBar navigation={navigation} />
       <ScrollView style={subContainer}>
-        <Text style={[headingText, globalStyles.arialBold]}>
+        <Text style={headingText}>
           NEARBY RESTAURANTS
         </Text>
         <View style={buttonContainer}>
           <View style={buttonPair}>
-            <Text style={[label, globalStyles.arialBold]}>Rating</Text>
+            <Text style={label}>Rating</Text>
             <TouchableOpacity style={button} onPress={handleOpenRatingModal}>
-              <Text style={[buttonText, globalStyles.arialBold]}>
+              <Text style={buttonText}>
                 {Array.isArray(ratingLabel)
                   ? ratingLabel.map((star, i) =>
                       React.cloneElement(star, { color: "white", key: i })
@@ -188,7 +188,7 @@ const Restaurants = ({ navigation }) => {
                         }
                       >
                         <Text
-                          style={[styles.modalText, globalStyles.arialNormal]}
+                          style={styles.modalText}
                         >
                           {item.label}
                         </Text>
@@ -200,12 +200,12 @@ const Restaurants = ({ navigation }) => {
             </Modal>
           </View>
           <View style={buttonPair}>
-            <Text style={[label, globalStyles.arialBold]}>Price</Text>
+            <Text style={label}>Price</Text>
             <TouchableOpacity
               style={button}
               onPress={handleOpenPriceRangeModal}
             >
-              <Text style={[buttonText, globalStyles.arialBold]}>
+              <Text style={buttonText}>
                 {priceRangeLabel}{" "}
                 <AntDesign name="caretdown" size={15} color="white" />
               </Text>
@@ -228,7 +228,7 @@ const Restaurants = ({ navigation }) => {
                         }
                       >
                         <Text
-                          style={[styles.modalText, globalStyles.arialNormal]}
+                          style={styles.modalText}
                         >
                           {item.label}
                         </Text>
@@ -240,7 +240,7 @@ const Restaurants = ({ navigation }) => {
             </Modal>
           </View>
         </View>
-        <Text style={[headingText, globalStyles.arialBold]}>RESTAURANTS</Text>
+        <Text style={headingText}>RESTAURANTS</Text>
         <View style={restaurantContainer}>
           {list.map((restaurant, index) => (
             <RestaurantCard key={index} restaurant={restaurant} />
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
   },
   headingText: {
     fontSize: 18,
-    // fontWeight: "bold",
+    fontFamily: globalStyles.oswaldMedium.fontFamily,
     textAlign: "left",
     marginVertical: 20,
   },
@@ -277,9 +277,16 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginVertical: 20,
   },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+  buttonPair: {
+    alignItems: "left",
+  },
   button: {
     backgroundColor: "#DA583B",
-    padding: 10,
+    padding: 0,
     paddingHorizontal: 5,
     borderRadius: 5,
     marginHorizontal: 5,
@@ -290,20 +297,14 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 20,
+    fontFamily: globalStyles.arialNormal.fontFamily,
     // fontWeight: "bold",
     color: "#FFF",
     textAlign: "center",
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-  },
-  buttonPair: {
-    alignItems: "left",
-  },
   label: {
     fontSize: 20,
-    // fontWeight: "bold",
+    fontFamily: globalStyles.oswaldMedium.fontFamily,
     marginTop: 20,
     marginHorizontal: 5,
   },
@@ -369,6 +370,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   modalText: {
+    fontFamily: globalStyles.arialNormal.fontFamily,
     color: "black",
     fontSize: 18,
     padding: 10,

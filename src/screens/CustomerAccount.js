@@ -87,7 +87,7 @@ const CustomerAccount = (navigation) => {
                 />
                 <NavBar navigation={navigation} />
                 <View style={styles.page}>
-                    <Text style={[styles.headingText, globalStyles.oswaldMedium]}>
+                    <Text style={styles.headingText}>
                         MY ACCOUNT
                     </Text>
                     <Text style={styles.noticeText}>
@@ -100,7 +100,7 @@ const CustomerAccount = (navigation) => {
                         editable={false} // makes the TextInput read-only
                     />
                     <Text style={styles.commentText}>
-                        Email used to login to the application
+                        Email used to login to the application.
                     </Text>
                     <Text style={styles.labelText}>Customer Email:</Text>
                     <TextInput
@@ -112,7 +112,7 @@ const CustomerAccount = (navigation) => {
                         }}
                     />
                     <Text style={styles.commentText}>
-                        Email used for your customer account
+                        Email used for your Customer account.
                     </Text>
                     <Text style={styles.labelText}>Customer Phone:</Text>
                     <TextInput
@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
     },
     headingText: {
         fontSize: 20,
+        fontFamily: globalStyles.oswaldMedium.fontFamily,
         textAlign: "left",
     },
     noticeText: {

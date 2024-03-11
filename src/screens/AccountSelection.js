@@ -36,7 +36,7 @@ const AccountSelection = () => {
 
   const handleCourierSelect = () => {
     setUserMode('courier');
-    navigation.navigate('CourierDeliveries');
+    navigation.navigate('TabsCourier');
   };
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const AccountSelection = () => {
       if (userMode === 'customer') {
         navigation.navigate('Tabs');
       } else if (userMode === 'courier') {
-        navigation.navigate('CourierDeliveries');
+        navigation.navigate('TabsCourier');
       } else if (userMode !== 'both'){
         navigation.navigate('Authentication');
       }

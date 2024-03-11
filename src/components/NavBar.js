@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AuthContext from "../components/AuthContext";
 import { useContext } from "react";
@@ -26,7 +25,7 @@ const NavBar = () => {
         resizeMode="contain"
       />
       <TouchableOpacity style={button} onPress={onLogout}>
-        <Text style={[buttonText, globalStyles.arialBold]}>LOG OUT</Text>
+        <Text style={buttonText}>LOG OUT</Text>
       </TouchableOpacity>
     </View>
   );
@@ -61,13 +60,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#DA583B",
     height: 40,
-    padding: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
     borderRadius: 10,
     marginHorizontal: 20,
   },
   buttonText: {
     fontSize: 15,
-    // fontWeight: "bold",
+    fontFamily: globalStyles.oswaldBold.fontFamily,
     color: "#FFF",
     textAlign: "center",
   },

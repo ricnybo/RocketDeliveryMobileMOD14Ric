@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import Tabs from "./src/components/Tabs";
+import TabsCourier from "./src/components/TabsCourier";
 import * as Location from "expo-location";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -107,6 +108,7 @@ const App = () => {
     await AsyncStorage.removeItem("user");
     setUser({});
     setIsLoggedIn(false);
+    setUserMode("unauthorized");
   };
 
   return (
@@ -153,6 +155,11 @@ const App = () => {
           <Stack.Screen
             name="CustomerAccount"
             component={AccountSelection}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="TabsCourier"
+            component={TabsCourier}
             options={{ headerShown: false }}
           />
           <Stack.Screen
