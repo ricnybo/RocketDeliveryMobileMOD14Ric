@@ -1,3 +1,7 @@
+// Purpose: This file contains the AccountSelection screen, which is the first screen
+// the user sees after logging in. It allows the user to select whether they are a 
+// customer or a courier. The user's selection is stored in the userMode state variable,
+// which is used to determine which tabs to display in the main app.
 import React, { useContext, useEffect, useState } from "react";
 import {
   View,
@@ -13,7 +17,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6 } from "@expo/vector-icons";
 
 import AuthContext from "../components/AuthContext";
 import { globalStyles } from "../components/GlobalStyles";
@@ -26,27 +30,48 @@ const URI = process.env.EXPO_PUBLIC_NGROK_URL;
 const AccountSelection = () => {
   const navigation = useNavigation();
   const [errorMessage, setErrorMessage] = useState("");
-  const { user, setUser, isLoggedIn, setIsLoggedIn, userMode, setUserMode, hasBothRoles, setHasBothRoles } = useContext(AuthContext);
-  const { container, image, headingText, text2, input, box, label, button, buttonText } = styles;
+  const {
+    user,
+    setUser,
+    isLoggedIn,
+    setIsLoggedIn,
+    userMode,
+    setUserMode,
+    hasBothRoles,
+    setHasBothRoles,
+  } = useContext(AuthContext);
+  const {
+    container,
+    image,
+    headingText,
+    text2,
+    input,
+    box,
+    label,
+    button,
+    buttonText,
+  } = styles;
 
+  // Functions to handle the customer/courier selection
   const handleCustomerSelect = () => {
-    setUserMode('customer');
-    navigation.navigate('Tabs');
+    setUserMode("customer");
+    navigation.navigate("Tabs");
   };
 
   const handleCourierSelect = () => {
-    setUserMode('courier');
-    navigation.navigate('TabsCourier');
+    setUserMode("courier");
+    navigation.navigate("TabsCourier");
   };
 
+  // Check what roles the user has. If they have both, set hasBothRoles to true.
   useEffect(() => {
     if (!hasBothRoles) {
-      if (userMode === 'customer') {
-        navigation.navigate('Tabs');
-      } else if (userMode === 'courier') {
-        navigation.navigate('TabsCourier');
-      } else if (userMode !== 'both'){
-        navigation.navigate('Authentication');
+      if (userMode === "customer") {
+        navigation.navigate("Tabs");
+      } else if (userMode === "courier") {
+        navigation.navigate("TabsCourier");
+      } else if (userMode !== "both") {
+        navigation.navigate("Authentication");
       }
     }
   }, [userMode, hasBothRoles, navigation]);
@@ -67,19 +92,24 @@ const AccountSelection = () => {
           resizeMode="contain"
         />
 
-        <Text style={[headingText, globalStyles.oswaldMedium]}>Select Account Type</Text>
+        <Text style={[headingText, globalStyles.oswaldMedium]}>
+          Select Account Type
+        </Text>
         <Text></Text>
         <View style={styles.cardContainer}>
           <TouchableOpacity style={styles.card} onPress={handleCustomerSelect}>
             <FontAwesome6 name="user-large" size={100} color="#DA583B" />
-            <Text style={[styles.cardText, globalStyles.arialNormal]}>Customer</Text>
+            <Text style={[styles.cardText, globalStyles.arialNormal]}>
+              Customer
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.card} onPress={handleCourierSelect}>
             <FontAwesome6 name="taxi" size={100} color="black" />
-            <Text style={[styles.cardText, globalStyles.arialNormal]}>Courier</Text>
+            <Text style={[styles.cardText, globalStyles.arialNormal]}>
+              Courier
+            </Text>
           </TouchableOpacity>
         </View>
-
       </View>
     </KeyboardAwareScrollView>
   );
@@ -98,32 +128,29 @@ const styles = StyleSheet.create({
   },
   headingText: {
     fontSize: 20,
-    // fontWeight: "bold",
     textAlign: "center",
   },
   text2: {
     fontSize: 15,
-    // fontWeight: "bold",
     textAlign: "left",
     paddingBottom: 10,
   },
   cardContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 20,
   },
   card: {
-    width: '45%', // Adjust as needed
+    width: "45%", 
     paddingVertical: 20,
     borderWidth: 1,
-    borderColor: 'lightgrey',
+    borderColor: "lightgrey",
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   cardText: {
     marginTop: 10,
     fontSize: 18,
-    // fontWeight: 'bold',
   },
   button: {
     backgroundColor: "#DA583B",
@@ -134,7 +161,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     color: "#FFF",
-    // fontWeight: "bold",
     textAlign: "center",
   },
   input: {
@@ -164,7 +190,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    // fontWeight: "bold",
     marginTop: 20,
   },
 });

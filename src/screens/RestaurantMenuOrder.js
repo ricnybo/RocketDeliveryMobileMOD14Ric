@@ -1,3 +1,4 @@
+// Displays the menu of a restaurant and allows the user to create an order
 import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -23,9 +24,11 @@ import AuthContext from "../components/AuthContext";
 const URI = process.env.EXPO_PUBLIC_NGROK_URL;
 const colorScheme = Appearance.getColorScheme();
 
+// Displays a product and allows the user to select a quantity
 const Product = ({ product, onQuantityChange }) => {
   const [quantity, setQuantity] = useState(0);
 
+  // Update the quantity in the parent component when the user changes the quantity
   const handleQuantityChange = (newQuantity) => {
     setQuantity(newQuantity);
     onQuantityChange(product.id, newQuantity);
@@ -84,6 +87,7 @@ const RestaurantMenuOrder = ({ route }) => {
   const { user, isLoggedIn, userMode } = useContext(AuthContext);
   const customerId = user.customer_id;
 
+  // Fetch the products when the component mounts
   useEffect(() => {
     if (user) {
       fetch(`${URI}/api/products?restaurant=${restaurantId}`)
@@ -93,6 +97,7 @@ const RestaurantMenuOrder = ({ route }) => {
     }
   }, [restaurantId, user]);
 
+  // Redirects the non-customer user to the appropriate screen
   useEffect(() => {
     if (userMode === "courier") {
       navigation.navigate("CourierDeliveries");
@@ -101,6 +106,7 @@ const RestaurantMenuOrder = ({ route }) => {
     }
   }, [userMode, navigation]);
 
+  // Update the quantities when the products change
   const handleQuantityChange = (productId, quantity) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
@@ -108,14 +114,17 @@ const RestaurantMenuOrder = ({ route }) => {
     }));
   };
 
+  // Disable the order button if no products are selected
   const isOrderButtonDisabled = Object.values(quantities).every(
     (quantity) => quantity === 0
   );
 
+  // Initiate the creation of an order by making the modal visible
   const handleCreateOrderPress = () => {
     setModalVisible(true);
   };
 
+  // Create an order and display the order confirmation
   const handleConfirmOrderPress = () => {
     if (user) {
       setOrderStatus("processing");
@@ -124,6 +133,8 @@ const RestaurantMenuOrder = ({ route }) => {
         const orderData = {
           restaurant_id: restaurantId,
           customer_id: customerId,
+          send_sms: phoneChecked,
+          send_email: emailChecked,
           products: Object.entries(quantities).map(([id, quantity]) => ({
             id: Number(id),
             quantity,
@@ -232,30 +243,51 @@ const RestaurantMenuOrder = ({ route }) => {
                   </Text>
                 </View>
                 <View style={styles.line2} />
-                <Text style={styles.text}>Would you like to receive your order confirmation</Text>
+                <Text style={styles.text}>
+                  Would you like to receive your order confirmation
+                </Text>
                 <Text style={styles.text}>by email and/or text?</Text>
                 <View style={styles.checkBoxRow}>
                   <CheckBox
                     checked={emailChecked}
                     onPress={() => setEmailChecked(!emailChecked)}
                     title={"By Email"}
-                    containerStyle={{ margin: 0, backgroundColor: "transparent", borderWidth: 0 }}
-                    titleProps={{ style: { fontFamily: globalStyles.arialNormal.fontFamily } }}
+                    containerStyle={{
+                      margin: 0,
+                      backgroundColor: "transparent",
+                      borderWidth: 0,
+                    }}
+                    titleProps={{
+                      style: {
+                        fontFamily: globalStyles.arialNormal.fontFamily,
+                      },
+                    }}
                   />
                   <CheckBox
                     checked={phoneChecked}
                     onPress={() => setPhoneChecked(!phoneChecked)}
                     title={"By Phone"}
-                    containerStyle={{ margin: 0, backgroundColor: "transparent", borderWidth: 0 }}
-                    titleProps={{ style: { fontFamily: globalStyles.arialNormal.fontFamily } }}
+                    containerStyle={{
+                      margin: 0,
+                      backgroundColor: "transparent",
+                      borderWidth: 0,
+                    }}
+                    titleProps={{
+                      style: {
+                        fontFamily: globalStyles.arialNormal.fontFamily,
+                      },
+                    }}
                   />
                 </View>
                 {orderStatus !== "success" && (
                   <TouchableOpacity
                     style={styles.modalButton}
-                    onPress={handleConfirmOrderPress}
+                    onPress={
+                      orderStatus !== "processing"
+                        ? handleConfirmOrderPress
+                        : null
+                    }
                   >
-                    
                     {orderStatus === "processing" ? (
                       <Text style={styles.modalButtonText}>
                         PROCESSING ORDER...
@@ -340,7 +372,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 0,
     textAlign: "left",
-    // justifyContent: "space-evenly",
     alignItems: "center",
   },
   button: {

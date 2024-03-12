@@ -1,3 +1,5 @@
+// Purpose: Provide a screen for the customer to view a list of nearby 
+// restaurants and filter the list based on rating and price range.
 import React from "react";
 import {
   View,
@@ -43,9 +45,20 @@ const Restaurants = ({ navigation }) => {
   const [priceRangeLabel, setPriceRangeLabel] = useState("-- Select --");
   const [isRatingModalVisible, setRatingModalVisible] = useState(false);
   const [isPriceRangeModalVisible, setPriceRangeModalVisible] = useState(false);
-  const { user, setUser, isLoggedIn, setIsLoggedIn, userMode, setUserMode, hasBothRoles, setHasBothRoles } =
-    useContext(AuthContext);
+  const {
+    user,
+    setUser,
+    isLoggedIn,
+    setIsLoggedIn,
+    userMode,
+    setUserMode,
+    hasBothRoles,
+    setHasBothRoles,
+  } = useContext(AuthContext);
 
+  // Create an array of objects to represent the ratings.  Each object has a
+  // label and a value.  The label is a string of stars and the value is the
+  // number of stars.  The value is used to filter the list of restaurants.
   const ratings = [
     { label: "-- Select --", value: "-- Select --" },
     { label: "*", value: 1 },
@@ -64,6 +77,11 @@ const Restaurants = ({ navigation }) => {
       return item;
     }
   });
+
+  // Create an array of objects to represent the price ranges.  Each object has
+  // a label and a value.  The label is a string of dollar signs and the value
+  // is the number of dollar signs.  The value is used to filter the list of
+  // restaurants.
   const priceRanges = [
     { label: "-- Select --", value: "-- Select --" },
     { label: "$", value: 1 },
@@ -71,9 +89,14 @@ const Restaurants = ({ navigation }) => {
     { label: "$$$", value: 3 },
   ];
 
+  // Fetch the list of restaurants from the server.  The query parameters are
+  // based on the state of the component.  The query parameters are added to the
+  // URI as a query string.  The query string is then used to fetch the list of
+  // restaurants from the server.
   const fetchList = async () => {
     const queryParams = {};
 
+    // Add query parameters to the object if they are not the default value.
     if (rating !== "-- Select --") {
       queryParams.rating = parseInt(rating);
     }
@@ -81,7 +104,8 @@ const Restaurants = ({ navigation }) => {
       queryParams.price_range = parseInt(priceRange);
     }
 
-    // Convert the object to a query string
+    // Convert the object to a query string.  This allows for the inclusion or
+    // omission of query parameters based on the state of the component.
     const queryString = Object.keys(queryParams)
       .map(
         (key) =>
@@ -94,10 +118,15 @@ const Restaurants = ({ navigation }) => {
       .catch((error) => console.error(error));
   };
 
+  // Fetch the list of restaurants when the component mounts.  This will fetch
+  // the list of restaurants with the default query parameters.
   useEffect(() => {
     fetchList();
   }, [rating, priceRange]);
 
+  // If the user is not logged in or does not have both roles, redirect to the
+  // Authentication screen.  If the user is a courier, redirect to the
+  // CourierDeliveries screen.
   useEffect(() => {
     if (userMode === "courier") {
       navigation.navigate("CourierDeliveries");
@@ -106,6 +135,10 @@ const Restaurants = ({ navigation }) => {
     }
   }, [userMode, navigation]);
 
+  // Handle the selection of a rating.  If the rating is the default value,
+  // set the rating and rating label to the default value.  Otherwise, set the
+  // rating and rating label to the selected value.  Then, close the rating
+  // modal.
   const handleSelectRating = (rating, label) => {
     if (rating === "-- Select --") {
       setRating(rating);
@@ -121,6 +154,10 @@ const Restaurants = ({ navigation }) => {
     handleCloseRatingModal();
   };
 
+  // Handle the selection of a price range.  If the price range is the default
+  // value, set the price range and price range label to the default value.
+  // Otherwise, set the price range and price range label to the selected value.
+  // Then, close the price range modal.
   const handleSelectPriceRange = (priceRange, label) => {
     setPriceRange(priceRange);
     setPriceRangeLabel(label);
@@ -143,6 +180,8 @@ const Restaurants = ({ navigation }) => {
     setPriceRangeModalVisible(false);
   };
 
+  // Create a component to represent a star icon.  The component takes a color
+  // prop to set the color of the star icon.
   const StarIcon = ({ color }) => (
     <FontAwesome name="star" size={14} color={color} />
   );
@@ -154,9 +193,7 @@ const Restaurants = ({ navigation }) => {
       />
       <NavBar navigation={navigation} />
       <ScrollView style={subContainer}>
-        <Text style={headingText}>
-          NEARBY RESTAURANTS
-        </Text>
+        <Text style={headingText}>NEARBY RESTAURANTS</Text>
         <View style={buttonContainer}>
           <View style={buttonPair}>
             <Text style={label}>Rating</Text>
@@ -187,11 +224,7 @@ const Restaurants = ({ navigation }) => {
                           handleSelectRating(item.value, item.label, "#000")
                         }
                       >
-                        <Text
-                          style={styles.modalText}
-                        >
-                          {item.label}
-                        </Text>
+                        <Text style={styles.modalText}>{item.label}</Text>
                       </TouchableOpacity>
                     )}
                   />
@@ -227,11 +260,7 @@ const Restaurants = ({ navigation }) => {
                           handleSelectPriceRange(item.value, item.label)
                         }
                       >
-                        <Text
-                          style={styles.modalText}
-                        >
-                          {item.label}
-                        </Text>
+                        <Text style={styles.modalText}>{item.label}</Text>
                       </TouchableOpacity>
                     )}
                   />
@@ -298,7 +327,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontFamily: globalStyles.arialNormal.fontFamily,
-    // fontWeight: "bold",
     color: "#FFF",
     textAlign: "center",
   },

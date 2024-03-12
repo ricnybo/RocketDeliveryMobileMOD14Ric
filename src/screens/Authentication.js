@@ -1,3 +1,4 @@
+// Purpose: Provide a screen for users to login to the app.
 import React, { useContext, useEffect, useState } from "react";
 import {
   View,
@@ -27,8 +28,16 @@ const Authentication = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const { user, setUser, isLoggedIn, setIsLoggedIn, userMode, setUserMode, hasBothRoles, setHasBothRoles } =
-    useContext(AuthContext);
+  const {
+    user,
+    setUser,
+    isLoggedIn,
+    setIsLoggedIn,
+    userMode,
+    setUserMode,
+    hasBothRoles,
+    setHasBothRoles,
+  } = useContext(AuthContext);
   const {
     container,
     image,
@@ -55,6 +64,8 @@ const Authentication = () => {
 
     const data = await response.json();
 
+    // If the login is successful, store the user data in AsyncStorage 
+    // for persistant login and set the user state
     if (data.success) {
       await AsyncStorage.setItem(
         "user",
@@ -85,13 +96,13 @@ const Authentication = () => {
         setUserMode("unauthorized");
         setHasBothRoles(false);
       }
-      // navigation.navigate("Tabs");
-      // navigation.navigate("AccountSelection");
     } else {
       setErrorMessage("Invalid email or password");
     }
   };
 
+  // Check if the user is logged in and has both roles. 
+  // If so, navigate to the appropriate screen.
   useEffect(() => {
     const bootstrapAsync = async () => {
       let userData;
@@ -111,43 +122,26 @@ const Authentication = () => {
     bootstrapAsync();
   }, []);
 
+  // When the user is logged in, navigate to the appropriate screen
   useEffect(() => {
-    console.log('(Authentication) Use State Value log:');
-    console.log('(Authentication) isLoggedIn:', isLoggedIn);
     if (isLoggedIn) {
       if (userMode === "both") {
-        console.log('(Authentication) userMode both: ', userMode);
         navigation.navigate("AccountSelection");
       } else if (userMode === "customer") {
-        console.log('(Authentication) userMode customer: ', userMode);
-        navigation.navigate("Restaurants");
+        navigation.navigate("Tabs");
       } else if (userMode === "courier") {
-        console.log('(Authentication) userMode courier: ', userMode);
         navigation.navigate("TabsCourier");
       } else {
-        console.log('(Authentication) userMode unauthorized: ', userMode);
         navigation.navigate("Unauthorized");
       }
-      console.log('(Authentication) hasBothRoles after login:', hasBothRoles);
     }
-  }, [isLoggedIn, userMode, navigation, userMode, hasBothRoles]);
+  }, [user, userMode, navigation, userMode, hasBothRoles]);
 
   // ! For testing purposes only - remove before production
-  useEffect(() => {
-    setEmail("erica.ger@gmail.com");
-    setPassword("password");
-  }, []);
-
   // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     navigation.navigate("Tabs");
-  //   }
-  // }, [isLoggedIn, navigation]);
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     navigation.navigate("AccountSelection");
-  //   }
-  // }, [isLoggedIn, navigation]);
+  //   setEmail("erica.ger@gmail.com");
+  //   setPassword("password");
+  // }, []);
 
   return (
     <KeyboardAwareScrollView
@@ -213,12 +207,10 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    // fontWeight: "bold",
     textAlign: "left",
   },
   text2: {
     fontSize: 15,
-    // fontWeight: "bold",
     textAlign: "left",
     paddingBottom: 10,
   },
@@ -231,7 +223,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     color: "#FFF",
-    // fontWeight: "bold",
     textAlign: "center",
   },
   input: {
@@ -261,7 +252,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    // fontWeight: "bold",
     marginTop: 20,
   },
 });

@@ -1,3 +1,4 @@
+// Purpose: Provide a screen for the user to view their order history and details of each order.
 import React, { useEffect, useState, useContext } from "react";
 import {
   View,
@@ -9,7 +10,7 @@ import {
   FlatList,
   Modal,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import AuthContext from "../components/AuthContext";
 import NavBar from "../components/NavBar";
 import { globalStyles } from "../components/GlobalStyles";
@@ -22,18 +23,36 @@ const OrderHistory = ({ navigation }) => {
   const [orders, setOrders] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
+  // Function to fetch the user's order history
+  const fetchOrders = () => {
     fetch(`${URI}/api/orders?id=${user.customer_id}&type=customer`)
       .then((response) => response.json())
       .then((data) => setOrders(data))
       .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    fetchOrders();
   }, []);
 
+  // Function to refresh the order history
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchOrders();
+    setRefreshing(false);
+  }, []);
+
+  // Function to render each order in the FlatList
   const renderItem = ({ item }) => (
     <View style={styles.row}>
-      <Text style={[styles.column, globalStyles.arialNormal]}>{item.restaurant_name}</Text>
-      <Text style={[styles.statusColumn, globalStyles.arialNormal]}>{item.status.toUpperCase()}</Text>
+      <Text style={[styles.column, globalStyles.arialNormal]}>
+        {item.restaurant_name}
+      </Text>
+      <Text style={[styles.statusColumn, globalStyles.arialNormal]}>
+        {item.status.toUpperCase()}
+      </Text>
       <View style={styles.viewColumn}>
         <TouchableOpacity onPress={() => handleViewPress(item)}>
           <Feather name="zoom-in" size={24} color="black" />
@@ -42,6 +61,7 @@ const OrderHistory = ({ navigation }) => {
     </View>
   );
 
+  // Function to handle the View button press and display the order details in a modal
   const handleViewPress = (order) => {
     setSelectedOrder(order);
     setModalVisible(true);
@@ -55,12 +75,20 @@ const OrderHistory = ({ navigation }) => {
       <NavBar navigation={navigation} />
       <View style={styles.container}>
         <View style={styles.subContainer}>
-          <Text style={[globalStyles.arialBold, styles.headingText]}>MY ORDERS</Text>
+          <Text style={[globalStyles.oswaldBold, styles.headingText]}>
+            MY ORDERS
+          </Text>
           <View style={styles.header}>
-            <Text style={[styles.headerText, globalStyles.arialBold]}>ORDER</Text>
-            <Text style={[styles.statusHeaderText, globalStyles.arialBold]}>STATUS</Text>
+            <Text style={[styles.headerText, globalStyles.arialBold]}>
+              ORDER
+            </Text>
+            <Text style={[styles.statusHeaderText, globalStyles.arialBold]}>
+              STATUS
+            </Text>
             <View style={styles.viewHeader}>
-              <Text style={[styles.headerText, globalStyles.arialBold]}>VIEW</Text>
+              <Text style={[styles.headerText, globalStyles.arialBold]}>
+                VIEW
+              </Text>
             </View>
           </View>
           <FlatList
@@ -68,6 +96,8 @@ const OrderHistory = ({ navigation }) => {
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={{ paddingBottom: 70 }}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
           />
           <Modal
             visible={isModalVisible}
@@ -78,41 +108,61 @@ const OrderHistory = ({ navigation }) => {
               <View style={styles.modalContent}>
                 <View style={styles.modalHeader}>
                   <View style={styles.modalHeaderText}>
-                    <Text style={[styles.restaurantName, globalStyles.oswaldBold]}>
+                    <Text
+                      style={[styles.restaurantName, globalStyles.oswaldBold]}
+                    >
                       {selectedOrder?.restaurant_name}
                     </Text>
-                    <Text style={[styles.orderDetails, globalStyles.arialNormal]}>
+                    <Text
+                      style={[styles.orderDetails, globalStyles.arialNormal]}
+                    >
                       Order Date:{" "}
                       {new Date(selectedOrder?.created_at).toLocaleDateString()}
                     </Text>
-                    <Text style={[styles.orderDetails, globalStyles.arialNormal]}>
+                    <Text
+                      style={[styles.orderDetails, globalStyles.arialNormal]}
+                    >
                       Status: {selectedOrder?.status.toUpperCase()}
                     </Text>
-                    <Text style={[styles.orderDetails, globalStyles.arialNormal]}>
+                    <Text
+                      style={[styles.orderDetails, globalStyles.arialNormal]}
+                    >
                       Courier: {selectedOrder?.courier_name}
                     </Text>
                   </View>
                   <TouchableOpacity onPress={() => setModalVisible(false)}>
-                    <Text style={[styles.modalCloseButton, globalStyles.arialBold]}>X</Text>
+                    <AntDesign name="close" size={24} color="#fff" />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.modalBody}>
                   {selectedOrder?.products.map((product, index) => (
                     <View key={index} style={styles.orderItem}>
-                      <Text style={[styles.orderItemText, globalStyles.arialNormal]}>
+                      <Text
+                        style={[styles.orderItemText, globalStyles.arialNormal]}
+                      >
                         {product.product_name}
                       </Text>
-                      <Text style={[styles.orderItemText, styles.quantityText, globalStyles.arialNormal]}>
+                      <Text
+                        style={[
+                          styles.orderItemText,
+                          styles.quantityText,
+                          globalStyles.arialNormal,
+                        ]}
+                      >
                         x{product.quantity}
                       </Text>
-                      <Text style={[styles.priceText, globalStyles.arialNormal]}>
+                      <Text
+                        style={[styles.priceText, globalStyles.arialNormal]}
+                      >
                         ${Number(product.unit_cost / 100).toFixed(2)}
                       </Text>
                     </View>
                   ))}
                   <View style={styles.line} />
                   <View style={styles.totalContainer}>
-                    <Text style={[styles.orderTotalText, globalStyles.arialBold]}>
+                    <Text
+                      style={[styles.orderTotalText, globalStyles.arialBold]}
+                    >
                       TOTAL: ${(selectedOrder?.total_cost / 100).toFixed(2)}
                     </Text>
                   </View>
@@ -139,13 +189,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 20,
     color: "red",
-    // fontFamily: "Oswald", // Use the Oswald font
   },
   headingText: {
     fontSize: 20,
     marginBottom: 20,
     color: "black",
-    // fontWeight: "bold",
   },
   header: {
     flexDirection: "row",
@@ -156,13 +204,11 @@ const styles = StyleSheet.create({
   headerText: {
     color: "white",
     fontSize: 16,
-    // fontWeight: "bold",
     flex: 1,
   },
   statusHeaderText: {
     color: "white",
     fontSize: 16,
-    // fontWeight: "bold",
     flex: 1,
     textAlign: "center",
   },
@@ -209,7 +255,6 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    // fontWeight: "bold",
   },
   modalHeader: {
     flexDirection: "row",
@@ -235,12 +280,10 @@ const styles = StyleSheet.create({
   },
   modalCloseButton: {
     fontSize: 24,
-    // fontWeight: "900",
     color: "white",
   },
   modalHeadingText: {
     fontSize: 18,
-    // fontWeight: "bold",
     textAlign: "left",
     marginTop: 10,
     marginHorizontal: 20,
@@ -251,7 +294,6 @@ const styles = StyleSheet.create({
   },
   restaurantName: {
     color: "#DA583B",
-    // fontWeight: "900",
     fontSize: 20,
   },
   orderDetails: {
@@ -264,7 +306,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 5,
     marginHorizontal: 20,
-    // backgroundColor: "green",
   },
   orderItemText: {
     fontFamily: globalStyles.arialNormal.fontFamily,
@@ -273,7 +314,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   quantityText: {
-    wifth: 25,
+    width: 25,
     flex: 0.25,
   },
   priceText: {
@@ -290,7 +331,6 @@ const styles = StyleSheet.create({
   },
   orderTotalText: {
     fontSize: 18,
-    // fontWeight: "bold",
     textAlign: "right",
     width: "100%",
     marginTop: 5,

@@ -1,3 +1,4 @@
+// Code to create the bottom tab navigation for the Customer app
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -19,10 +20,7 @@ function HomeStackScreen() {
         headerShown: false,
       }}
     >
-      <HomeStack.Screen
-        name="RestaurantsHome"
-        component={Restaurants}
-      />
+      <HomeStack.Screen name="RestaurantsHome" component={Restaurants} />
       <HomeStack.Screen
         name="RestaurantMenuOrder"
         component={RestaurantMenuOrder}
@@ -74,7 +72,7 @@ const Tabs = () => {
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={focused ? styles.activeIcon : styles.icon}>
-              <FontAwesome5 
+              <FontAwesome5
                 name="history"
                 size={13}
                 color={focused ? "#222126" : "black"}
@@ -89,7 +87,7 @@ const Tabs = () => {
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={focused ? styles.activeIcon : styles.icon}>
-              <FontAwesome6 name="user-large" size={13} color='black' />
+              <FontAwesome6 name="user-large" size={13} color="black" />
             </View>
           ),
         }}

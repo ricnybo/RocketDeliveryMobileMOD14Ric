@@ -14,6 +14,7 @@ import AuthContext from "./src/components/AuthContext";
 import Authentication from "./src/screens/Authentication";
 import Restaurants from "./src/screens/Restaurants";
 import RestaurantMenuOrder from "./src/screens/RestaurantMenuOrder";
+import OrderHistory from "./src/screens/OrderHistory";
 import AccountSelection from "./src/screens/AccountSelection";
 import CourierDeliveries from "./src/screens/CourierDeliveries";
 import CustomerAccount from "./src/screens/CustomerAccount";
@@ -77,17 +78,22 @@ const App = () => {
     bootstrapAsync();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setError("permission to access location was denied");
-        return;
-      }
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
+  // * Loaction services.  Left in place for future use.
+  // useEffect(() => {
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       setError("permission to access location was denied");
+  //       return;
+  //     }
+  //     let location = await Location.getCurrentPositionAsync({});
+  //     setLocation(location);
+  //   })();
+  // }, []);
+
+  // if (location) {
+  //   console.log(location);
+  // }
 
   if (!fontsLoaded) {
     if (fontError) {
@@ -100,9 +106,6 @@ const App = () => {
     SplashScreen.hideAsync();
   }
 
-  if (location) {
-    console.log(location);
-  }
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("user");
@@ -150,6 +153,11 @@ const App = () => {
           <Stack.Screen
             name="RestaurantMenuOrder"
             component={RestaurantMenuOrder}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="OrderHistory"
+            component={OrderHistory}
             options={{ headerShown: false }}
           />
           <Stack.Screen
