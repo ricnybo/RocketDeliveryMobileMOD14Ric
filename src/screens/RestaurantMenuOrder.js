@@ -1,6 +1,8 @@
+// Displays the menu of a restaurant and allows the user to create an order
 import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { CheckBox } from "react-native-elements";
 import {
   View,
   Text,
@@ -15,15 +17,18 @@ import {
 
 import { AntDesign, Ionicons, Octicons, FontAwesome } from "@expo/vector-icons";
 
+import { globalStyles } from "../components/GlobalStyles";
 import NavBar from "../components/NavBar";
 import AuthContext from "../components/AuthContext";
 
 const URI = process.env.EXPO_PUBLIC_NGROK_URL;
 const colorScheme = Appearance.getColorScheme();
 
+// Displays a product and allows the user to select a quantity
 const Product = ({ product, onQuantityChange }) => {
   const [quantity, setQuantity] = useState(0);
 
+  // Update the quantity in the parent component when the user changes the quantity
   const handleQuantityChange = (newQuantity) => {
     setQuantity(newQuantity);
     onQuantityChange(product.id, newQuantity);
@@ -48,7 +53,11 @@ const Product = ({ product, onQuantityChange }) => {
         color="black"
         onPress={() => handleQuantityChange(Math.max(0, quantity - 1))}
       />
-      <TextInput value={String(quantity)} style={styles.input} />
+      <TextInput
+        value={String(quantity)}
+        style={styles.input}
+        editable={false}
+      />
       <AntDesign
         name="pluscircle"
         size={24}
@@ -65,15 +74,20 @@ const RestaurantMenuOrder = ({ route }) => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [orderStatus, setOrderStatus] = useState("idle");
+  const [emailChecked, setEmailChecked] = useState(false);
+  const [phoneChecked, setPhoneChecked] = useState(false);
   const { restaurantId } = route.params;
   const { restaurantName } = route.params;
   const { restaurantRating } = route.params;
   const { restaurantPriceRange } = route.params;
   const priceRange = "$".repeat(restaurantPriceRange);
-  const rating = [...Array(restaurantRating)].map((_, i) => <FontAwesome key={i} name="star" size={14} color="black" />);
-  const { user, isLoggedIn } = useContext(AuthContext);
+  const rating = [...Array(restaurantRating)].map((_, i) => (
+    <FontAwesome key={i} name="star" size={14} color="black" />
+  ));
+  const { user, isLoggedIn, userMode } = useContext(AuthContext);
   const customerId = user.customer_id;
 
+  // Fetch the products when the component mounts
   useEffect(() => {
     if (user) {
       fetch(`${URI}/api/products?restaurant=${restaurantId}`)
@@ -83,6 +97,16 @@ const RestaurantMenuOrder = ({ route }) => {
     }
   }, [restaurantId, user]);
 
+  // Redirects the non-customer user to the appropriate screen
+  useEffect(() => {
+    if (userMode === "courier") {
+      navigation.navigate("CourierDeliveries");
+    } else if (userMode !== "customer") {
+      navigation.navigate("Authentication");
+    }
+  }, [userMode, navigation]);
+
+  // Update the quantities when the products change
   const handleQuantityChange = (productId, quantity) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
@@ -90,14 +114,17 @@ const RestaurantMenuOrder = ({ route }) => {
     }));
   };
 
+  // Disable the order button if no products are selected
   const isOrderButtonDisabled = Object.values(quantities).every(
     (quantity) => quantity === 0
   );
 
+  // Initiate the creation of an order by making the modal visible
   const handleCreateOrderPress = () => {
     setModalVisible(true);
   };
 
+  // Create an order and display the order confirmation
   const handleConfirmOrderPress = () => {
     if (user) {
       setOrderStatus("processing");
@@ -106,6 +133,8 @@ const RestaurantMenuOrder = ({ route }) => {
         const orderData = {
           restaurant_id: restaurantId,
           customer_id: customerId,
+          send_sms: phoneChecked,
+          send_email: emailChecked,
           products: Object.entries(quantities).map(([id, quantity]) => ({
             id: Number(id),
             quantity,
@@ -165,9 +194,11 @@ const RestaurantMenuOrder = ({ route }) => {
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>Order Confirmation</Text>
+                  <Text style={[styles.modalTitle, globalStyles.oswaldMedium]}>
+                    Order Confirmation
+                  </Text>
                   <TouchableOpacity onPress={() => setModalVisible(false)}>
-                    <Text style={styles.modalCloseButton}>X</Text>
+                    <AntDesign name="close" size={24} color="#fff" />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.modalBody}>
@@ -181,7 +212,9 @@ const RestaurantMenuOrder = ({ route }) => {
                       const total = product.cost * quantity;
                       return (
                         <View key={productId} style={styles.orderItem}>
-                          <Text style={styles.orderItemText}>{product.name}</Text>
+                          <Text style={styles.orderItemText}>
+                            {product.name}
+                          </Text>
                           <Text
                             style={[styles.orderItemText, styles.quantityText]}
                           >
@@ -210,13 +243,55 @@ const RestaurantMenuOrder = ({ route }) => {
                   </Text>
                 </View>
                 <View style={styles.line2} />
+                <Text style={styles.text}>
+                  Would you like to receive your order confirmation
+                </Text>
+                <Text style={styles.text}>by email and/or text?</Text>
+                <View style={styles.checkBoxRow}>
+                  <CheckBox
+                    checked={emailChecked}
+                    onPress={() => setEmailChecked(!emailChecked)}
+                    title={"By Email"}
+                    containerStyle={{
+                      margin: 0,
+                      backgroundColor: "transparent",
+                      borderWidth: 0,
+                    }}
+                    titleProps={{
+                      style: {
+                        fontFamily: globalStyles.arialNormal.fontFamily,
+                      },
+                    }}
+                  />
+                  <CheckBox
+                    checked={phoneChecked}
+                    onPress={() => setPhoneChecked(!phoneChecked)}
+                    title={"By Phone"}
+                    containerStyle={{
+                      margin: 0,
+                      backgroundColor: "transparent",
+                      borderWidth: 0,
+                    }}
+                    titleProps={{
+                      style: {
+                        fontFamily: globalStyles.arialNormal.fontFamily,
+                      },
+                    }}
+                  />
+                </View>
                 {orderStatus !== "success" && (
                   <TouchableOpacity
                     style={styles.modalButton}
-                    onPress={handleConfirmOrderPress}
+                    onPress={
+                      orderStatus !== "processing"
+                        ? handleConfirmOrderPress
+                        : null
+                    }
                   >
                     {orderStatus === "processing" ? (
-                      <Text style={styles.modalButtonText}>PROCESSING ORDER...</Text>
+                      <Text style={styles.modalButtonText}>
+                        PROCESSING ORDER...
+                      </Text>
                     ) : (
                       <Text style={styles.modalButtonText}>CONFIRM ORDER</Text>
                     )}
@@ -274,24 +349,30 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   headingText: {
+    fontFamily: globalStyles.oswaldMedium.fontFamily,
     fontSize: 18,
-    fontWeight: "bold",
     textAlign: "left",
     marginVertical: 20,
   },
   restaurantNameText: {
-    fontSize: 12,
-    fontWeight: "bold",
+    fontFamily: globalStyles.oswaldBold.fontFamily,
+    fontSize: 16,
     textAlign: "left",
   },
   text: {
+    fontFamily: globalStyles.arialNormal.fontFamily,
     fontSize: 12,
     color: "black",
   },
   starText: {
-    fontSize: 18,
     color: "black",
-    fontWeight: "bold",
+  },
+  checkBoxRow: {
+    fontFamily: globalStyles.arialNormal.fontFamily,
+    flexDirection: "row",
+    padding: 0,
+    textAlign: "left",
+    alignItems: "center",
   },
   button: {
     backgroundColor: "#DA583B",
@@ -310,9 +391,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
+    fontFamily: globalStyles.oswaldMedium.fontFamily,
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
   },
   image: {
     width: 60,
@@ -329,14 +410,16 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   productNameText: {
+    fontFamily: globalStyles.arialBold.fontFamily,
     fontSize: 14,
-    fontWeight: "bold",
   },
   productPriceText: {
+    fontFamily: globalStyles.arialBold.fontFamily,
     fontSize: 14,
-    fontWeight: "bold",
   },
   input: {
+    fontFamily: globalStyles.arialNormal.fontFamily,
+    color: "black",
     width: 50,
     height: 30,
     borderColor: "gray",
@@ -358,7 +441,6 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    fontWeight: "bold",
   },
   modalHeader: {
     flexDirection: "row",
@@ -382,8 +464,8 @@ const styles = StyleSheet.create({
     color: "white",
   },
   modalHeadingText: {
+    fontFamily: globalStyles.oswaldMedium.fontFamily,
     fontSize: 18,
-    fontWeight: "bold",
     textAlign: "left",
     marginTop: 10,
     marginHorizontal: 20,
@@ -404,9 +486,9 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   modalButtonText: {
+    fontFamily: globalStyles.oswaldMedium.fontFamily,
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
   },
   orderItem: {
     flexDirection: "row",
@@ -416,18 +498,24 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   orderItemText: {
+    fontFamily: globalStyles.arialNormal.fontFamily,
     fontSize: 14,
+    color: "black",
     flex: 1,
   },
   quantityText: {
-    flex: 0.5,
+    width: 25,
+    flex: 0.25,
   },
   priceText: {
+    fontFamily: globalStyles.arialNormal.fontFamily,
+    width: 70,
+    textAlign: "right",
     alignSelf: "flex-end",
   },
   orderTotalText: {
+    fontFamily: globalStyles.oswaldBold.fontFamily,
     fontSize: 18,
-    fontWeight: "bold",
     textAlign: "right",
     width: "100%",
     marginTop: 5,
@@ -446,7 +534,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     alignSelf: "stretch",
     width: "100%",
-    marginVertical: 0,
+    marginBottom: 15,
   },
   successMessage: {
     fontSize: 12,
@@ -463,6 +551,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   messageText: {
+    fontFamily: globalStyles.arialNormal.fontFamily,
     fontSize: 16,
     textAlign: "center",
   },

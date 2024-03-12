@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "RocketDeliveryMobileMOD13Ric",
-    "slug": "RocketDeliveryMobileMOD13Ric",
+    "name": "RocketDeliveryMobileMOD14Ric",
+    "slug": "RocketDeliveryMobileMOD14Ric",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/Images/AppIcon.png",
@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*", "assets/fonts/*", "assets/fonts/Oswald/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -25,6 +23,25 @@
     },
     "web": {
       "favicon": "./assets/Images/AppIcon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/arial.ttf",
+            "./assets/fonts/arialbd.ttf",
+            "./assets/fonts/arialbi.ttf",
+            "./assets/fonts/ariali.ttf",
+            "./assets/fonts/Oswald-Regular.ttf",
+            "./assets/fonts/Oswald-Bold.ttf",
+            "./assets/fonts/Oswald-ExtraLight.ttf",
+            "./assets/fonts/Oswald-Light.ttf",
+            "./assets/fonts/Oswald-Medium.ttf",
+            "./assets/fonts/Oswald-SemiBold.ttf"
+          ]
+        }
+      ]
+    ]
   }
 }

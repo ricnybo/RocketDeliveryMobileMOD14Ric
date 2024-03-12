@@ -1,16 +1,14 @@
-// Code to create the bottom tab navigation for the Customer app
+// Code to create the bottom tab navigation for the courier app
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather, FontAwesome6, FontAwesome5 } from "@expo/vector-icons";
 
-import Restaurants from "../screens/Restaurants";
-import OrderHistory from "../screens/OrderHistory";
-import RestaurantMenuOrder from "../screens/RestaurantMenuOrder";
-import CustomerAccount from "../screens/CustomerAccount";
+import CourierDeliveries from "../screens/CourierDeliveries";
+import CourierAccount from "../screens/CourierAccount";
 
-const Tab = createBottomTabNavigator();
+const TabCourier = createBottomTabNavigator();
 const HomeStack = createStackNavigator();
 
 function HomeStackScreen() {
@@ -20,10 +18,9 @@ function HomeStackScreen() {
         headerShown: false,
       }}
     >
-      <HomeStack.Screen name="RestaurantsHome" component={Restaurants} />
       <HomeStack.Screen
-        name="RestaurantMenuOrder"
-        component={RestaurantMenuOrder}
+        name="CourierDeliveries"
+        component={CourierDeliveries}
       />
     </HomeStack.Navigator>
   );
@@ -42,9 +39,9 @@ const TabBarButton = ({ accessibilityState, children, ...props }) => {
   );
 };
 
-const Tabs = () => {
+const TabsCourier = () => {
   return (
-    <Tab.Navigator
+    <TabCourier.Navigator
       screenOptions={{
         tabBarActiveTintColor: "#222126",
         tabBarInactiveTintColor: "gray",
@@ -55,35 +52,20 @@ const Tabs = () => {
         headerShown: false,
       }}
     >
-      <Tab.Screen
-        name={"Restaurants"}
+      <TabCourier.Screen
+        name={"Deliveries"}
         component={HomeStackScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={focused ? styles.activeIcon : styles.icon}>
-              <FontAwesome6 name="burger" size={13} color="black" />
+              <FontAwesome5 name="history" size={13} color="black" />
             </View>
           ),
         }}
       />
-      <Tab.Screen
-        name={"Order History"}
-        component={OrderHistory}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={focused ? styles.activeIcon : styles.icon}>
-              <FontAwesome5
-                name="history"
-                size={13}
-                color={focused ? "#222126" : "black"}
-              />
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
+      <TabCourier.Screen
         name={"Account"}
-        component={CustomerAccount}
+        component={CourierAccount}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={focused ? styles.activeIcon : styles.icon}>
@@ -92,7 +74,7 @@ const Tabs = () => {
           ),
         }}
       />
-    </Tab.Navigator>
+    </TabCourier.Navigator>
   );
 };
 
@@ -108,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Tabs;
+export default TabsCourier;

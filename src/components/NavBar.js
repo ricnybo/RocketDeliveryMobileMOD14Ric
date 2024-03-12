@@ -1,3 +1,4 @@
+// Code to display the navigation bar at the top of the screen
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -5,12 +6,14 @@ import { useNavigation } from "@react-navigation/native";
 import AuthContext from "../components/AuthContext";
 import { useContext } from "react";
 
+import { globalStyles } from "../components/GlobalStyles";
+
 const NavBar = () => {
   const navigation = useNavigation();
-  const { handleLogout } = useContext(AuthContext);
+  const { handleLogout, setUser, setIsLoggedIn } = useContext(AuthContext);
   const { container, image, button, buttonText } = styles;
 
-  const onLogout = () => {
+  const onLogout = async () => {
     handleLogout();
     navigation.navigate("Authentication");
   };
@@ -58,13 +61,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#DA583B",
     height: 40,
-    padding: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
     borderRadius: 10,
     marginHorizontal: 20,
   },
   buttonText: {
     fontSize: 15,
-    fontWeight: "bold",
+    fontFamily: globalStyles.oswaldBold.fontFamily,
     color: "#FFF",
     textAlign: "center",
   },

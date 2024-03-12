@@ -1,3 +1,4 @@
+// Code to display the restaurant card on the Restaurants Screen
 import React from "react";
 import {
   View,
@@ -9,8 +10,9 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from "@expo/vector-icons";
 
+import { globalStyles } from "../components/GlobalStyles";
 import cuisineGreek from "../../assets/Images/Restaurants/cuisineGreek.jpg";
 import cuisineJapanese from "../../assets/Images/Restaurants/cuisineJapanese.jpg";
 import cuisinePasta from "../../assets/Images/Restaurants/cuisinePasta.jpg";
@@ -24,10 +26,12 @@ const columnWidth = screenWidth / 2;
 const RestaurantCard = ({ restaurant }) => {
   const navigation = useNavigation();
   const priceRange = "$".repeat(restaurant.price_range);
-  // const rating = "*".repeat(restaurant.rating);
-  const rating = [...Array(restaurant.rating)].map((_, i) => <FontAwesome key={i} name="star" size={14} color="black" />);
+  const rating = [...Array(restaurant.rating)].map((_, i) => (
+    <FontAwesome key={i} name="star" size={14} color="black" />
+  ));
 
   let image;
+  // Set the image based on the restaurant id
   switch (restaurant.id) {
     case 1:
       image = cuisineJapanese;
@@ -57,6 +61,7 @@ const RestaurantCard = ({ restaurant }) => {
       image = cuisinePizza;
   }
 
+  // Pass the paramseters to the RestaurantMenuOrder screen
   const handlePress = () => {
     navigation.navigate("RestaurantMenuOrder", {
       restaurantId: restaurant.id,
@@ -70,10 +75,12 @@ const RestaurantCard = ({ restaurant }) => {
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.restaurantCard}>
         <Image source={image} style={styles.restaurantImage} />
-        <Text style={styles.restaurantName}>
+        <Text style={[styles.restaurantName, globalStyles.arialBold]}>
           {restaurant.name} ({priceRange})
         </Text>
-        <Text style={styles.restaurantDetails}>({rating})</Text>
+        <Text style={[styles.restaurantDetails, globalStyles.arialBold]}>
+          ({rating})
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -97,13 +104,11 @@ const styles = StyleSheet.create({
   },
   restaurantName: {
     fontSize: 14,
-    fontWeight: "bold",
     paddingTop: 10,
     paddingHorizontal: 20,
   },
   restaurantDetails: {
     fontSize: 14,
-    fontWeight: "bold",
     paddingHorizontal: 20,
   },
   restaurantImage: {
